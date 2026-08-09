@@ -4,20 +4,24 @@
 #include "EnhancedInputComponent.h"
 #include "InputactionValue.h"
 #include "Components/SkeletalMeshComponent.h"
+#include "Player/MainCharacterAnimInstance.h"
 
 // Sets default values
 AMainChahracter::AMainChahracter()
 {
- 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
+	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
 	CameraSpringArmComponent = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArm"));
 	CameraSpringArmComponent->SetupAttachment(RootComponent);
+	CameraSpringArmComponent->SetRelativeRotation(FRotator(-30, 0, 0));
+	CameraSpringArmComponent->TargetArmLength = 700.0f;
 
 	CameraComponent = CreateDefaultSubobject<UCameraComponent>(TEXT("Player Camera"));
 	CameraComponent->SetupAttachment(CameraSpringArmComponent);
 
 	USkeletalMeshComponent* MainSkeletalMesh = GetMesh();
+	MainSkeletalMesh->SetRelativeLocationAndRotation(FVector(0, 0, -88.0f), FRotator(0, -90, 0));
 
 	Head = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("HEAD"));
 	Head->SetupAttachment(MainSkeletalMesh);
@@ -42,13 +46,22 @@ AMainChahracter::AMainChahracter()
 	Arms = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Arms"));
 	Arms->SetupAttachment(MainSkeletalMesh);
 	Arms->SetLeaderPoseComponent(MainSkeletalMesh, false, false);
+
 }
 
 // Called when the game starts or when spawned
 void AMainChahracter::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
+
+	// 모듈 skeletalMesh라고 표시
+	// 이 값이 ABP에 영향을 줌
+	if (UMainCharacterAnimInstance* AnimInstance = Cast<UMainCharacterAnimInstance>(GetMesh()->GetAnimInstance()))
+	{
+		AnimInstance->SetModuledMeshBool(true);
+	}
+
 }
 
 // Called every frame
@@ -66,13 +79,14 @@ void AMainChahracter::SetupPlayerInputComponent(UInputComponent* PlayerInputComp
 	if (UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(PlayerInputComponent))
 	{
 		// 이동 관련 키 매핑
-		EnhancedInputComponent->BindAction(IA_Move, ETriggerEvent::Triggered,this, &AMainChahracter::OnMove);
+		EnhancedInputComponent->BindAction(IA_Move, ETriggerEvent::Triggered, this, &AMainChahracter::OnMove);
 	}
 
 }
 
 void AMainChahracter::OnMove(const FInputActionValue& Value)
-{}
+{
+}
 
 
 
