@@ -2,7 +2,7 @@
 
 #include "CoreMinimal.h"
 #include "player/BaseCharacter.h"
-#include "MainChahracter.generated.h"
+#include "MainCharacter.generated.h"
 
 class UCameraComponent;
 class UInputAction;
@@ -12,13 +12,18 @@ class USpringArmComponent;
 struct FInputActionValue;
 
 UCLASS()
-class H1_API AMainChahracter : public ABaseCharacter
+class H1_API AMainCharacter : public ABaseCharacter
 {
 	GENERATED_BODY()
 
 public:
 	// Sets default values for this character's properties
-	AMainChahracter();
+	AMainCharacter();
+
+	FORCEINLINE const TSet<AActor*>& GetOverlappedInteractableActor() const
+	{
+		return OverlappedInteractableActor;
+	}
 
 protected:
 	// Called when the game starts or when spawned
@@ -30,18 +35,30 @@ protected:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+	virtual void UnPossessed() override;
+	virtual void PossessedBy(AController* NewController) override;
 
-#pragma region Input Binded Func
-	void OnMove(const FInputActionValue& Value);
-#pragma endregion
+	UFUNCTION()
+	void OnSphereBeginOverlap(
+		UPrimitiveComponent* OverlappedComponent,
+		AActor* OtherActor,
+		UPrimitiveComponent* OtherComp,
+		int32 OtherBodyIndex,
+		bool bFromSweep,
+		const FHitResult&
+		SweepResult);
 
+
+	UFUNCTION()
+	void OnSphereEmdOverlap (
+		UPrimitiveComponent* OverlappedComponent,
+		AActor* OtherActor,
+		UPrimitiveComponent* OtherComp,
+		int32 OtherBodyIndex);
 
 protected:
-
-#pragma region Input Variable
-	UPROPERTY(EditDefaultsOnly)
-	TObjectPtr<UInputAction> IA_Move;
-#pragma endregion
+	UPROPERTY(VisibleAnywhere)
+	TSet<AActor*> OverlappedInteractableActor;
 
 
 #pragma region Component Variable
@@ -50,6 +67,9 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	TObjectPtr<UCameraComponent> CameraComponent = nullptr;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	TObjectPtr<class USphereComponent> InteractDetecSphere;
 
 
 	/*-----------------------------

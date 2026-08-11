@@ -1,21 +1,29 @@
-#include "player/MainChahracter.h"
+#include "player/MainCharacter.h"
 #include "Camera/CameraComponent.h"
 #include "GameFrameWork/SpringArmComponent.h"
 #include "EnhancedInputComponent.h"
 #include "InputactionValue.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "Player/MainCharacterAnimInstance.h"
+#include "Components/SphereComponent.h"
+#include "Interface/InteractiveActor.h"
+#include "GameFramework/CharacterMovementComponent.h"
 
 // Sets default values
-AMainChahracter::AMainChahracter()
+AMainCharacter::AMainCharacter()
 {
 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
+	// Set Moduled Mesh
 	CameraSpringArmComponent = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArm"));
 	CameraSpringArmComponent->SetupAttachment(RootComponent);
 	CameraSpringArmComponent->SetRelativeRotation(FRotator(-30, 0, 0));
 	CameraSpringArmComponent->TargetArmLength = 700.0f;
+	CameraSpringArmComponent->bUsePawnControlRotation = true;
+	CameraSpringArmComponent->bInheritPitch = false;
+	CameraSpringArmComponent->bInheritRoll = false;
+	CameraSpringArmComponent->bInheritYaw = true;
 
 	CameraComponent = CreateDefaultSubobject<UCameraComponent>(TEXT("Player Camera"));
 	CameraComponent->SetupAttachment(CameraSpringArmComponent);
@@ -47,10 +55,19 @@ AMainChahracter::AMainChahracter()
 	Arms->SetupAttachment(MainSkeletalMesh);
 	Arms->SetLeaderPoseComponent(MainSkeletalMesh, false, false);
 
+
+	// SetSphere Colliosion
+	InteractDetecSphere = CreateDefaultSubobject<USphereComponent>(TEXT("InteractDetecSphere"));
+	InteractDetecSphere->SetupAttachment(RootComponent);
+	InteractDetecSphere->SetSphereRadius(500.0f);
+
+	// 플레이어가 움직이는 방향으로 회전
+	GetCharacterMovement()->bOrientRotationToMovement = true;
+	GetCharacterMovement()->MaxWalkSpeed = 1200.0f;
 }
 
 // Called when the game starts or when spawned
-void AMainChahracter::BeginPlay()
+void AMainCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 
@@ -62,30 +79,56 @@ void AMainChahracter::BeginPlay()
 		AnimInstance->SetModuledMeshBool(true);
 	}
 
+	if (InteractDetecSphere)
+	{
+		InteractDetecSphere->OnComponentBeginOverlap.AddDynamic(this, &AMainCharacter::OnSphereBeginOverlap);
+		InteractDetecSphere->OnComponentEndOverlap.AddDynamic(this, &AMainCharacter::OnSphereEmdOverlap);
+	}
+
 }
 
 // Called every frame
-void AMainChahracter::Tick(float DeltaTime)
+void AMainCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
 }
 
 // Called to bind functionality to input
-void AMainChahracter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
+void AMainCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
-	if (UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(PlayerInputComponent))
-	{
-		// 이동 관련 키 매핑
-		EnhancedInputComponent->BindAction(IA_Move, ETriggerEvent::Triggered, this, &AMainChahracter::OnMove);
-	}
+}
+
+void AMainCharacter::UnPossessed()
+{
+	Super::UnPossessed();
+	GetCharacterMovement()->StopMovementImmediately();
+	GetCharacterMovement()->DisableMovement();
 
 }
 
-void AMainChahracter::OnMove(const FInputActionValue& Value)
+void AMainCharacter::PossessedBy(AController* NewController)
 {
+	GetCharacterMovement()->SetMovementMode(MOVE_Walking);
+	GetCharacterMovement()->StopMovementImmediately();
+}
+
+void AMainCharacter::OnSphereBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	if (OtherActor && OtherActor->Implements<UInteractiveActor>())
+	{
+		OverlappedInteractableActor.Add(OtherActor);
+	}
+}
+
+void AMainCharacter::OnSphereEmdOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
+{
+	if (OtherActor && OtherActor->Implements<UInteractiveActor>())
+	{
+		OverlappedInteractableActor.Remove(OtherActor);
+	}
 }
 
 

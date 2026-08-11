@@ -17,6 +17,7 @@ class H1_API AMainPlayerController : public APlayerController
 
 public:
 	AMainPlayerController(const FObjectInitializer& ObjectInitializer);
+	void PossessToPrev();
 	
 protected:
 	virtual void BeginPlay() override;
@@ -25,6 +26,7 @@ protected:
 private:
 	void Input_Move(const FInputActionValue& InputValue);
 	void Input_Look(const FInputActionValue& InputValue);
+	void Input_InterAct(const FInputActionValue& InputValue);
 
 protected:
 	UPROPERTY(EditAnywhere, Category = Input)
@@ -37,5 +39,13 @@ protected:
 	TObjectPtr<class UInputAction> IA_Look;
 
 	UPROPERTY(EditAnywhere, Category = Input)
+	TObjectPtr<class UInputAction> IA_Interact;
+
+	UPROPERTY(EditAnywhere, Category = Input)
 	int32 GameInputPriority = 0;
+
+
+private:
+	UPROPERTY()
+	TObjectPtr<APawn> PreviousPawn = nullptr;
 };
