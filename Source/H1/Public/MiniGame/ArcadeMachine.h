@@ -10,6 +10,8 @@
 struct FInputActionValue;
 class UInputMappingContext;
 class UInputAction;
+class UMiniGameActorComponent;
+class UWidgetComponent;
 
 UCLASS()
 class H1_API AArcadeMachine : public APawn, public IInteractiveActor
@@ -62,6 +64,12 @@ protected:
 
 	UPROPERTY(EditAnywhere, Category = Input)
 	TObjectPtr<class UInputAction> IA_Exit;
+
+	UPROPERTY(EditAnywhere, Category = "MiniGame|StratagemHero");
+	TObjectPtr<UMiniGameActorComponent> MiniGameComponent = nullptr;
+
+	UPROPERTY(EditAnywhere);
+	TObjectPtr<UWidgetComponent> WidgetComp = nullptr;
 
 
 	UPROPERTY(EditAnywhere, Category = Input)

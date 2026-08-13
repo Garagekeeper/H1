@@ -7,6 +7,9 @@
 #include "EnhancedInputSubsystems.h"
 #include "GameFramework/PlayerController.h"
 #include "player/MainPlayerController.h"
+#include "Component/StratagemHeroComponent.h"
+#include "Components/WidgetComponent.h"
+#include "Widget/StaratagemHeroWidget.h"
 
 // Sets default values
 AArcadeMachine::AArcadeMachine()
@@ -16,13 +19,26 @@ AArcadeMachine::AArcadeMachine()
 
 	ArcadeMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
 	SetRootComponent(ArcadeMesh);
+
+	WidgetComp = CreateDefaultSubobject<UWidgetComponent>(TEXT("Widget"));
+	WidgetComp->SetupAttachment(RootComponent);
+
+	MiniGameComponent = CreateDefaultSubobject<UMiniGameActorComponent>(TEXT("MiniGame2"));
+
+	AutoPossessAI = EAutoPossessAI::Disabled;
+	AutoPossessPlayer = EAutoReceiveInput::Disabled;
 }
 
 // Called when the game starts or when spawned
 void AArcadeMachine::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
+
+	if (auto* widget = Cast<UStaratagemHeroWidget>(WidgetComp->GetUserWidgetObject()))
+	{
+		widget->BindHeroComponent(Cast<UStratagemHeroComponent>(MiniGameComponent));
+	}
 }
 
 // Called every frame
@@ -54,6 +70,7 @@ void AArcadeMachine::PossessedBy(AController* NewController)
 	}
 
 	//TODO StartGame..?
+	MiniGameComponent->GameStart();
 }
 
 void AArcadeMachine::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -74,7 +91,16 @@ void AArcadeMachine::Input_Arrow_Up(const FInputActionValue& InputValue)
 {
 	if (InputValue.Get<bool>())
 	{
-		UE_LOG(LogTemp, Log, TEXT("Up Arraow Started"));
+		if (!MiniGameComponent)
+		{
+			UE_LOG(LogTemp, Error, TEXT("MiniGameComponent was nullptr"));
+		}
+		else
+		{
+			UE_LOG(LogTemp, Log, TEXT("Up Arraow Started"));
+			MiniGameComponent->CheckInput(EDirType::Up);
+		}
+
 	}
 
 }
@@ -83,7 +109,15 @@ void AArcadeMachine::Input_Arrow_Down(const FInputActionValue & InputValue)
 {
 	if (InputValue.Get<bool>())
 	{
-		UE_LOG(LogTemp, Log, TEXT("Down Arraow Started"));
+		if (!MiniGameComponent)
+		{
+			UE_LOG(LogTemp, Error, TEXT("MiniGameComponent was nullptr"));
+		}
+		else
+		{
+			UE_LOG(LogTemp, Log, TEXT("Down Arraow Started"));
+			MiniGameComponent->CheckInput(EDirType::Down);
+		}
 	}
 }
 
@@ -91,7 +125,16 @@ void AArcadeMachine::Input_Arrow_Right(const FInputActionValue & InputValue)
 {
 	if (InputValue.Get<bool>())
 	{
-		UE_LOG(LogTemp, Log, TEXT("Right Arraow Started"));
+		if (!MiniGameComponent)
+		{
+			UE_LOG(LogTemp, Error, TEXT("MiniGameComponent was nullptr"));
+		}
+		else
+		{
+			UE_LOG(LogTemp, Log, TEXT("Right Arraow Started"));
+			MiniGameComponent->CheckInput(EDirType::Right);
+		}
+
 	}
 }
 
@@ -99,7 +142,16 @@ void AArcadeMachine::Input_Arrow_Left(const FInputActionValue & InputValue)
 {
 	if (InputValue.Get<bool>())
 	{
-		UE_LOG(LogTemp, Log, TEXT("Left Arraow Started"));
+		if (!MiniGameComponent)
+		{
+			UE_LOG(LogTemp, Error, TEXT("MiniGameComponent was nullptr"));
+		}
+		else
+		{
+			UE_LOG(LogTemp, Log, TEXT("Left Arraow Started"));
+			MiniGameComponent->CheckInput(EDirType::Left);
+		}
+
 	}
 }
 
