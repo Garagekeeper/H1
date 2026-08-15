@@ -2,6 +2,7 @@
 
 
 #include "Component/StratagemHeroComponent.h"
+#include "H1/Define.h"
 
 UStratagemHeroComponent::UStratagemHeroComponent()
 	:Super()
@@ -69,5 +70,5 @@ void UStratagemHeroComponent::GenerateCommand()
 	};
 	// TODO 위젯에 델리게이트보내기
 
-	OnCommandSelected.Broadcast(CurrentCommand.Num());
+	OnCommandSelected.Broadcast(CurrentCommand);
 }

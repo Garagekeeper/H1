@@ -6,7 +6,7 @@
 #include "Component/MiniGameActorComponent.h"
 #include "StratagemHeroComponent.generated.h"
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnCommandSelected, int32, Size);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnCommandSelected, TArray<EDirType>, Command);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnCommandInput, int32, Index, bool, bIsCorrect);
 
 

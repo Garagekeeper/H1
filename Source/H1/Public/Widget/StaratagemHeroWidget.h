@@ -22,7 +22,7 @@ public:
 
 protected:
 	UFUNCTION()
-	void OnCommandSelectedCallback(int32 Size);
+	void OnCommandSelectedCallback(TArray<EDirType> Commands);
 
 	UFUNCTION()
 	void OnCommandInputCallback(int32 Index, bool bIsCorrect);

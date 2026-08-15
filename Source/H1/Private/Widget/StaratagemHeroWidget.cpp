@@ -15,7 +15,7 @@ void UStaratagemHeroWidget::BindHeroComponent(UStratagemHeroComponent* HeroCompo
 	}
 }
 
-void UStaratagemHeroWidget::OnCommandSelectedCallback(int32 Size)
+void UStaratagemHeroWidget::OnCommandSelectedCallback(TArray<EDirType> Commands)
 {
 	if (StaratagemWidget)
 	{

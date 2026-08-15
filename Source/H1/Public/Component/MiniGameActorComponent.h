@@ -6,15 +6,8 @@
 #include "Components/ActorComponent.h"
 #include "MiniGameActorComponent.generated.h"
 
-UENUM(BlueprintType, meta = (Bitflags, UseEnumValuesAsMaskValuesInEditor = "true"))
-enum class EDirType : uint8
-{
-	None,
-	Up,
-	Right,
-	Down,
-	Left
-};
+
+enum class EDirType : uint8;
 
 UENUM(BlueprintType, meta = (Bitflags, UseEnumValuesAsMaskValuesInEditor = "true"))
 enum class EMiniGamaState : uint8
