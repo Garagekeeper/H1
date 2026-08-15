@@ -1,20 +1,18 @@
-#include "player/MainCharacter.h"
+#include "Player/MainCharacter.h"
 #include "Camera/CameraComponent.h"
 #include "GameFrameWork/SpringArmComponent.h"
 #include "EnhancedInputComponent.h"
 #include "InputactionValue.h"
 #include "Components/SkeletalMeshComponent.h"
-#include "Player/MainCharacterAnimInstance.h"
+#include "player/MainCharacterAnimInstance.h"
 #include "Components/SphereComponent.h"
 #include "Interface/InteractiveActor.h"
-#include "GameFramework/CharacterMovementComponent.h"
+#include "GameFrameWork/CharacterMovementComponent.h"
 
 // Sets default values
 AMainCharacter::AMainCharacter()
+	:Super()
 {
-	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
-
 	// Set Moduled Mesh
 	CameraSpringArmComponent = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArm"));
 	CameraSpringArmComponent->SetupAttachment(RootComponent);

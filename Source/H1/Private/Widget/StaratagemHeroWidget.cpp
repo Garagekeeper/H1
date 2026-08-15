@@ -19,7 +19,7 @@ void UStaratagemHeroWidget::OnCommandSelectedCallback(TArray<EDirType> Commands)
 {
 	if (StaratagemWidget)
 	{
-		StaratagemWidget->InitCommandUI(Size);
+		StaratagemWidget->InitCommandUI(0);
 	}
 }
 
