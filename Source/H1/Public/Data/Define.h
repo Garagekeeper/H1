@@ -3,8 +3,6 @@
 #pragma once
 
 #include "CoreMinimal.h"
-
-
 UENUM(BlueprintType, meta = (Bitflags, UseEnumValuesAsMaskValuesInEditor = "true"))
 enum class EDirType : uint8
 {
@@ -14,4 +12,3 @@ enum class EDirType : uint8
 	Down,
 	Left
 };
-

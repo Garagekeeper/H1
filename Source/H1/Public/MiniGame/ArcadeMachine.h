@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Pawn.h"
 #include "Interface/InteractiveActor.h"
+#include "Component/MiniGameActorComponent.h"
 #include "ArcadeMachine.generated.h"
 
 struct FInputActionValue;
@@ -37,6 +38,10 @@ protected:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 private:
+private:
+	UFUNCTION()
+	void RelayUICommand(const FMinigameUICommand& Command);
+
 	void Input_Arrow_Up(const FInputActionValue& InputValue);
 	void Input_Arrow_Down(const FInputActionValue& InputValue);
 	void Input_Arrow_Right(const FInputActionValue& InputValue);

@@ -4,10 +4,13 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
+#include "Interface/MiniGameInterface.h"
 #include "MiniGameActorComponent.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnUICommandSent, const FMinigameUICommand&, Command);
 
 enum class EDirType : uint8;
+
 
 UENUM(BlueprintType, meta = (Bitflags, UseEnumValuesAsMaskValuesInEditor = "true"))
 enum class EMiniGamaState : uint8
@@ -38,6 +41,15 @@ protected:
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
+	void BroadcastUICommand(const FMinigameUICommand& Command)
+	{
+		if (OnSendUICommand.IsBound())
+			OnSendUICommand.Broadcast(Command);
+	}
+
+public:
+	FOnUICommandSent OnSendUICommand;
+
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "MiniGame|Stat")
 	int32 Score = 0;
@@ -50,4 +62,5 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "MiniGame|Stat")
 	EMiniGamaState GameState = EMiniGamaState::Idle;
+
 };

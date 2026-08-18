@@ -2,7 +2,6 @@
 
 
 #include "MiniGame/ArcadeMachine.h"
-#include "Components/SkeletalMeshComponent.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "GameFramework/PlayerController.h"
@@ -10,6 +9,7 @@
 #include "Component/StratagemHeroComponent.h"
 #include "Components/WidgetComponent.h"
 #include "Widget/StaratagemHeroWidget.h"
+#include "Interface/MiniGameInterface.h"
 
 // Sets default values
 AArcadeMachine::AArcadeMachine()
@@ -35,9 +35,9 @@ void AArcadeMachine::BeginPlay()
 	Super::BeginPlay();
 
 
-	if (auto* widget = Cast<UStaratagemHeroWidget>(WidgetComp->GetUserWidgetObject()))
+	if (UMiniGameActorComponent* ActiveiniGame = MiniGameComponent)
 	{
-		widget->BindHeroComponent(Cast<UStratagemHeroComponent>(MiniGameComponent));
+		ActiveiniGame->OnSendUICommand.AddDynamic(this, &AArcadeMachine::RelayUICommand);
 	}
 }
 
@@ -84,6 +84,16 @@ void AArcadeMachine::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 		InputComp->BindAction(IA_Arrow_Left, ETriggerEvent::Started, this, &AArcadeMachine::Input_Arrow_Left);
 		InputComp->BindAction(IA_Arrow_Right, ETriggerEvent::Started, this, &AArcadeMachine::Input_Arrow_Right);
 		InputComp->BindAction(IA_Exit, ETriggerEvent::Started, this, &AArcadeMachine::Input_Exit);
+	}
+}
+
+void AArcadeMachine::RelayUICommand(const FMinigameUICommand& Command)
+{
+	if (!WidgetComp) return;
+	UUserWidget* UserWidget = WidgetComp->GetUserWidgetObject();
+	if (UserWidget->Implements<UMiniGameInterface>())
+	{
+		IMiniGameInterface::Execute_ExecuteUICommand(UserWidget, Command);
 	}
 }
 

@@ -5,38 +5,35 @@
 #include "Component/StratagemHeroComponent.h"
 #include "Widget/StratagemWidget.h"
 
-void UStaratagemHeroWidget::BindHeroComponent(UStratagemHeroComponent* HeroComponent)
-{
-	if (HeroComponent)
-	{
-		// 컴포넌트의 델리게이트에 위젯의 콜백 함수를 연결합니다.
-		HeroComponent->OnCommandSelected.AddDynamic(this, &UStaratagemHeroWidget::OnCommandSelectedCallback);
-		HeroComponent->OnCommandInput.AddDynamic(this, &UStaratagemHeroWidget::OnCommandInputCallback);
-	}
-}
-
-void UStaratagemHeroWidget::OnCommandSelectedCallback(TArray<EDirType> Commands)
+void UStaratagemHeroWidget::OnCommandInit(const FMinigameUICommand& Command)
 {
 	if (StaratagemWidget)
 	{
-		StaratagemWidget->InitCommandUI(0);
+		int32 Size = Command.CommandSequence.Num();
+		StaratagemWidget->InitCommandUI(Size);
 	}
 }
 
-void UStaratagemHeroWidget::OnCommandInputCallback(int32 Index, bool bIsCorrect)
+void UStaratagemHeroWidget::OnArrowUpdate(const FMinigameUICommand& Command)
 {
 	if (StaratagemWidget)
 	{
-		StaratagemWidget->UpdateArrowUI(Index, bIsCorrect);
+		int32 Index = Command.NumericValue;
+		bool bVal = Command.BoolValue;
+		StaratagemWidget->UpdateArrowUI(Index, bVal);
 	}
 }
 
 void UStaratagemHeroWidget::NativeConstruct()
 {
-	UObject* Outer = GetOuter();
+	CommandFuncBindMap.Add(EMinigameUICommandType::UpdateCommands, &UStaratagemHeroWidget::OnCommandInit);
+	CommandFuncBindMap.Add(EMinigameUICommandType::UpdateContainer, &UStaratagemHeroWidget::OnArrowUpdate);
 }
 
-void UStaratagemHeroWidget::NativePreConstruct()
+void UStaratagemHeroWidget::ExecuteUICommand_Implementation(const FMinigameUICommand Command)
 {
-
+	if (CommandFuncBindMap.Contains(Command.CommandType))
+	{
+		(this->*CommandFuncBindMap[Command.CommandType])(Command);
+	}
 }

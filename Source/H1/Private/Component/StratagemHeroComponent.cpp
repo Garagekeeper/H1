@@ -2,7 +2,8 @@
 
 
 #include "Component/StratagemHeroComponent.h"
-#include "H1/Define.h"
+#include "Data/StratagemRow.h"
+#include "Data/Define.h"
 
 UStratagemHeroComponent::UStratagemHeroComponent()
 	:Super()
@@ -13,6 +14,7 @@ void UStratagemHeroComponent::GameStart()
 {
 	Super::GameStart();
 	GenerateCommand();
+	SelectCommand();
 }
 
 void UStratagemHeroComponent::GameEnd()
@@ -24,24 +26,32 @@ void UStratagemHeroComponent::GameEnd()
 void UStratagemHeroComponent::CheckInput(EDirType Input)
 {
 	Super::CheckInput(Input);
-	if (Input == EDirType::None)
+	/*if (Input == EDirType::None)
 	{
 		UE_LOG(LogTemp, Log, TEXT("Invalid input"));
-	}
+	}*/
 
 	if (CurrentCommand[CurrentIndex] == Input)
 	{
 		UE_LOG(LogTemp, Log, TEXT("Correct"));
-		OnCommandInput.Broadcast(CurrentIndex, true);
+		BroadcastUICommand(FMinigameUICommand::MakeUpdateContainerBool(CurrentIndex, true));
 		CurrentIndex++;
 		if (CurrentIndex == CurrentCommand.Num())
-			GenerateCommand();
+		{
+			GetWorld()->GetTimerManager().SetTimer(
+				CommandEndHandle,
+				this,
+				&UStratagemHeroComponent::SelectCommand,
+				CommandEndDelay,
+				false
+			);
+		}
 	}
 	else
 	{
 		for (int32 i = 0; i < CurrentIndex; ++i)
 		{
-			OnCommandInput.Broadcast(i, false);
+			BroadcastUICommand(FMinigameUICommand::MakeUpdateContainerBool(i, false));
 		}
 		CurrentIndex = 0;
 		//TODO Clear brfore 
@@ -52,23 +62,38 @@ void UStratagemHeroComponent::CheckInput(EDirType Input)
 void UStratagemHeroComponent::SelectCommand()
 {
 	// 데이터 에셋을 통해서 커맨드 가져오기
+	// 10개로 제한할거라 앞에서 지워도 괜찮을듯
+	if (SeqQueue.Num() > 0)
+	{
+		CurrentCommand = SeqQueue[0];
+		CurrentIndex = 0;
+		BroadcastUICommand(FMinigameUICommand::MakeUpdateCommand(CurrentCommand));
+		SeqQueue.RemoveAt(0);
+		GenerateCommand();
+	}
+	
 }
 
 void UStratagemHeroComponent::GenerateCommand()
 {
-	CurrentCommand.Empty();
-	CurrentIndex = 0;
-	CurrentCommand = {
-		EDirType::Up,
-		EDirType::Right ,
-		EDirType::Down ,
-		EDirType::Left ,
-		EDirType::Up ,
-		EDirType::Right ,
-		EDirType::Down ,
-		EDirType::Left
-	};
-	// TODO 위젯에 델리게이트보내기
+	TArray<FStratagemRow*> AllRows;
+	StratagemDataTable->GetAllRows<FStratagemRow>(TEXT("StratagemContext"), AllRows);
 
-	OnCommandSelected.Broadcast(CurrentCommand);
+	while( SeqQueue.Num() <10 )
+	{
+		if (AllRows.Num() > 0)
+		{
+			// 2. 무작위 행 선택
+			int32 RandomIndex = FMath::RandRange(0, AllRows.Num() - 1);
+			FStratagemRow* SelectedRow = AllRows[RandomIndex];
+
+			// 3. FString "WSSAD" -> TArray<EStratagemDirection> 변환
+			TArray<EDirType> Commands = SelectedRow->GetCommandSequence();
+			SeqQueue.Add(Commands);
+		}
+		else
+		{
+			break;
+		}
+	}
 }
