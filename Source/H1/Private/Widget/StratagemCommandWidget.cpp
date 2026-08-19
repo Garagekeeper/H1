@@ -44,15 +44,19 @@ void UStratagemCommandWidget::UpdateArrowColor(int32 Index, bool Res)
 	ArrowArray[Index]->SetColorAndOpacity(Res ? FLinearColor::Yellow : FLinearColor::White);
 }
 
-void UStratagemCommandWidget::InitCommand(int32 Size)
+void UStratagemCommandWidget::InitCommand(const TArray<EDirType>& CommandSeq)
 {
-	if (Size < 0 || Size >= ArrowArray.Num()) return;
+	if ( (CommandSeq.Num() < 0 ) || (CommandSeq.Num() > ArrowArray.Num())) return;
 	
 	ClearCommand();
 
-	for (int i = 0; i < Size; i++)
+	for (int i = 0; i < CommandSeq.Num(); i++)
 	{
 		ArrowArray[i]->SetVisibility(ESlateVisibility::Visible);
+		if (ArrowTextureMap.Contains(CommandSeq[i]))
+		{
+			ArrowArray[i]->SetBrushFromTexture(ArrowTextureMap[CommandSeq[i]], false);
+		}
 	}
 
 }

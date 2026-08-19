@@ -9,8 +9,7 @@ void UStaratagemHeroWidget::OnCommandInit(const FMinigameUICommand& Command)
 {
 	if (StaratagemWidget)
 	{
-		int32 Size = Command.CommandSequence.Num();
-		StaratagemWidget->InitCommandUI(Size);
+		StaratagemWidget->InitCommandUI(Command.CommandSequence, Command.StratagemIcon);
 	}
 }
 

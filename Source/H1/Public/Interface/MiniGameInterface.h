@@ -40,11 +40,13 @@ public:
         return Command;
     }
 
-    static FMinigameUICommand MakeUpdateCommand(TArray<EDirType> InCommandSequence)
+    static FMinigameUICommand MakeUpdateCommand(TArray<EDirType> InCommandSequence, TSoftObjectPtr<UTexture2D> InIcon, FString InName)
     {
         FMinigameUICommand Command;
         Command.CommandType = EMinigameUICommandType::UpdateCommands;
         Command.CommandSequence = InCommandSequence;
+        Command.StratagemIcon = InIcon;
+        Command.StratagemName;
         return Command;
     }
 
@@ -101,7 +103,12 @@ public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI Command")
     TArray<EDirType> CommandSequence;
 
-    
+    // 스트라타젬 화살표 방향 데이터 (0: Up, 1: Down, 2: Left, 3: Right 등)
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI Command")
+    TSoftObjectPtr<UTexture2D> StratagemIcon;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI Command")
+    FString StratagemName;
 };
 
 // This class does not need to be modified.

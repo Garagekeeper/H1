@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
+#include "Data/Define.h"
 #include "StratagemCommandWidget.generated.h"
 
 class UImage;
@@ -19,7 +20,7 @@ public:
 	// 화살표의 색상을 업데이트하는 함수
 	void UpdateArrowColor(int32 Index, bool res);
 	// 커맨드 초기화(생성)
-	void InitCommand(int32 Size);
+	void InitCommand(const TArray<EDirType>& CommandSeq);
 
 protected:
 	virtual void NativeConstruct() override;
@@ -64,4 +65,7 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	TArray<TObjectPtr<UImage>> ArrowArray;
+
+	UPROPERTY(EditDefaultsOnly, Category = "UI|Assets")
+	TMap<EDirType, UTexture2D*> ArrowTextureMap;
 };

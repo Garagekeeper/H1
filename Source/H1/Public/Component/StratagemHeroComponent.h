@@ -6,7 +6,17 @@
 #include "Component/MiniGameActorComponent.h"
 #include "StratagemHeroComponent.generated.h"
 
+USTRUCT(BlueprintType)
+struct FStratagem
+{
+	GENERATED_BODY()
 
+public:
+	TSoftObjectPtr<UTexture2D> StratagemIcon;
+	TArray<EDirType> Command;
+	FText StratagemName;
+	int32 Index;
+};
 
 /**
  * 
@@ -37,11 +47,12 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Minigame|Data")
 	UDataTable* StratagemDataTable;
 
-	TArray<TArray<EDirType>> SeqQueue;
+	TArray<FStratagem> StratagemQueue;
+	FStratagem CurrentStratagem;
+
 
 private:
-	int32 CurrentIndex;
-	TArray<EDirType> CurrentCommand;
+	
 
 	FTimerHandle CommandEndHandle;
 	float CommandEndDelay = 0.3f;

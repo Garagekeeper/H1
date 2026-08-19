@@ -107,7 +107,7 @@ void AArcadeMachine::Input_Arrow_Up(const FInputActionValue& InputValue)
 		}
 		else
 		{
-			UE_LOG(LogTemp, Log, TEXT("Up Arraow Started"));
+			//UE_LOG(LogTemp, Log, TEXT("Up Arraow Started"));
 			MiniGameComponent->CheckInput(EDirType::Up);
 		}
 
@@ -125,7 +125,7 @@ void AArcadeMachine::Input_Arrow_Down(const FInputActionValue & InputValue)
 		}
 		else
 		{
-			UE_LOG(LogTemp, Log, TEXT("Down Arraow Started"));
+			//UE_LOG(LogTemp, Log, TEXT("Down Arraow Started"));
 			MiniGameComponent->CheckInput(EDirType::Down);
 		}
 	}
@@ -141,7 +141,7 @@ void AArcadeMachine::Input_Arrow_Right(const FInputActionValue & InputValue)
 		}
 		else
 		{
-			UE_LOG(LogTemp, Log, TEXT("Right Arraow Started"));
+			//UE_LOG(LogTemp, Log, TEXT("Right Arraow Started"));
 			MiniGameComponent->CheckInput(EDirType::Right);
 		}
 
@@ -158,7 +158,7 @@ void AArcadeMachine::Input_Arrow_Left(const FInputActionValue & InputValue)
 		}
 		else
 		{
-			UE_LOG(LogTemp, Log, TEXT("Left Arraow Started"));
+			//UE_LOG(LogTemp, Log, TEXT("Left Arraow Started"));
 			MiniGameComponent->CheckInput(EDirType::Left);
 		}
 
